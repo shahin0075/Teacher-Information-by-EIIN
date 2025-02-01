@@ -3,236 +3,253 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teacher Info by EIIN</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+  <title>Teacher Information by EIIN</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom CSS -->
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f7f7f7;
-      margin: 0;
-      padding: 0;
-      color: #333;
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #3498db;
+      --accent-color: #e74c3c;
     }
-    header {
-      background-color: #ffd700;
-      color: #fff;
-      text-align: center;
-      padding: 20px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      font-size: 28px;
-      border-bottom: 3px solid #ffcc00;
+
+    .premium-navbar {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
-    header h1 {
-      margin: 0;
-    }
-    .container {
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 30px;
-      background-color: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    .form-group {
-      margin-bottom: 15px;
-      text-align: center;
-    }
-    input[type="text"] {
-      width: 70%;
-      padding: 10px;
-      margin: 5px 0;
-      border: 2px solid #ffd700;
-      border-radius: 8px;
-      font-size: 14px;
-      transition: all 0.3s ease-in-out;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
-    input[type="text"]:focus {
-      border-color: #ffcc00;
-      outline: none;
-      transform: scale(1.05);
-    }
-    button {
-      padding: 10px 20px;
-      background-color: #ffd700;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    .teacher-card {
+      background: #ffffff;
+      border-radius: 15px;
       transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
     }
-    button:hover {
-      background-color: #ffcc00;
-      transform: scale(1.1);
+
+    .teacher-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.12);
     }
-    button:active {
-      transform: scale(0.98);
+
+    .dark-mode {
+      background-color: #1a1a1a;
+      color: #ffffff;
     }
-    #iframe-container {
-      margin-top: 20px;
-      display: none;
-      border: 2px solid #ffd700;
-      border-radius: 8px;
-      height: 500px;
-      padding: 20px;
+
+    .dark-mode .teacher-card {
+      background: #2c2c2c;
     }
-    #progress-container {
-      display: none;
-      margin-top: 20px;
-      text-align: center;
+
+    .data-label {
+      color: var(--secondary-color);
+      font-weight: 600;
     }
-    #progress-bar {
-      width: 0;
-      height: 12px;
-      background: linear-gradient(to right, #ffd700, #ffcc00);
-      border-radius: 6px;
-      transition: width 0.3s ease;
-    }
-    #loading-text {
-      font-size: 18px;
-      color: #333;
-    }
-    footer {
-      background-color: #4d4d4d;
-      color: #fff;
-      text-align: center;
-      padding: 10px 20px;
+
+    #errorAlert {
       position: fixed;
-      bottom: 0;
-      width: 100%;
-      font-size: 14px;
-      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+      top: 80px;
+      right: 20px;
+      z-index: 1000;
+      display: none;
     }
-    footer p {
-      margin: 0;
+    
+    /* ফুটার স্টাইল */
+    footer {
+      background-color: #f8f9fa;
+      padding: 20px 0;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #6c757d;
+      border-top: 1px solid #e9ecef;
+      margin-top: 40px;
     }
-    /* Responsive Styles */
-    @media (max-width: 600px) {
-      header h1 {
-        font-size: 22px;
-      }
-      .container {
-        padding: 20px;
-      }
-      input[type="text"] {
-        width: 90%;
-      }
-      button {
-        padding: 8px 16px;
-        font-size: 14px;
-      }
+    footer a {
+      color: inherit;
+      text-decoration: none;
     }
   </style>
 </head>
-<body>
-  <header>
-    <h1>Teacher Information by EIIN</h1>
-  </header>
-
-  <div class="container">
-    <div class="form-group">
-      <label for="eiin">Enter EIIN Number:</label>
-      <input type="text" id="eiin" placeholder="Enter EIIN number" required />
+<body class="bg-light">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg premium-navbar">
+    <div class="container">
+      <a class="navbar-brand text-white fw-bold" href="#">
+        <i class="bi bi-mortarboard"></i> EIIN Explorer
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#"><i class="bi bi-house-door"></i> হোম</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#"><i class="bi bi-info-circle"></i> সহায়তা</a>
+          </li>
+        </ul>
+        <div class="d-flex">
+          <button id="darkModeToggle" class="btn btn-outline-light">
+            <i class="bi bi-moon-fill"></i> ডার্ক মোড
+          </button>
+        </div>
+      </div>
     </div>
-    <button onclick="loadTeacherInfo()">Get Teacher Info</button>
+  </nav>
 
-    <!-- Progress Container -->
-    <div id="progress-container">
-      <p id="loading-text">Loading...</p>
-      <div id="progress-bar"></div>
-    </div>
-
-    <!-- Iframe Container -->
-    <div id="iframe-container">
-      <iframe id="teacher-info-frame" style="width:100%; height:100%;" frameborder="0"></iframe>
-    </div>
-
-    <!-- Print and Download Buttons -->
-    <div id="actions" style="display: none; margin-top: 20px; text-align: center;">
-      <button onclick="printData()">Print Data</button>
-      <button onclick="downloadPDF()">Download PDF</button>
-      <button onclick="downloadJPG()">Download JPG</button>
-    </div>
+  <!-- Error Alert -->
+  <div id="errorAlert" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <span id="errorMessage"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
   </div>
 
+  <main class="container mb-5 mt-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="input-group mb-4 shadow-lg">
+          <input type="text" id="eiinInput" class="form-control form-control-lg" placeholder="EIIN নম্বর লিখুন">
+          <button onclick="loadData()" class="btn btn-primary btn-lg">
+            <i class="bi bi-search"></i> অনুসন্ধান করুন
+          </button>
+        </div>
+
+        <div id="loadingSection" class="text-center d-none">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="mt-2 text-muted">ডেটা লোড হচ্ছে...</p>
+        </div>
+
+        <div id="resultSection" class="d-none">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="text-primary">ফলাফল</h3>
+            <div class="btn-group">
+              <button class="btn btn-outline-primary" onclick="downloadPDF()">
+                <i class="bi bi-file-pdf"></i> PDF
+              </button>
+              <button class="btn btn-outline-primary" onclick="printData()">
+                <i class="bi bi-printer"></i> প্রিন্ট
+              </button>
+            </div>
+          </div>
+
+          <div id="teacherList" class="row g-4"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <!-- ফুটার -->
   <footer>
-    <p>© 2025 | Owner: Software Engineer Mohammad Sheikh Shahinur Rahman</p>
+    <p>
+      এই টুলসটি EIIN নম্বরের মাধ্যমে শিক্ষক সম্পর্কিত তথ্য অনুসন্ধান করার জন্য তৈরি করা হয়েছে।  
+      ব্যবহারকারী সহজেই তথ্য খুঁজে পেতে পারবেন এবং প্রয়োজন অনুযায়ী PDF ডাউনলোড বা প্রিন্ট করতে পারবেন।
+    </p>
+    <p>
+      © 2025 | Owner : Mohammad Sheikh Shahinur Rahman | Software engineer - IT Amadersomaj Inc.
+    </p>
   </footer>
 
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <!-- PDF Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <script>
-    function loadTeacherInfo() {
-      const eiin = document.getElementById("eiin").value;
-      if (!eiin) {
-        alert("Please enter a valid EIIN number");
-        return;
-      }
+    // Dark Mode Toggle
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    darkModeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      darkModeToggle.innerHTML = document.body.classList.contains('dark-mode') ? 
+        '<i class="bi bi-sun-fill"></i> লাইট মোড' : 
+        '<i class="bi bi-moon-fill"></i> ডার্ক মোড';
+    });
 
-      // Show progress bar
-      document.getElementById("progress-container").style.display = "block";
-      document.getElementById("iframe-container").style.display = "none";
-      document.getElementById("actions").style.display = "none";
-
-      // Initialize progress bar
-      let progress = 0;
-      const progressBar = document.getElementById("progress-bar");
-      const loadingText = document.getElementById("loading-text");
-
-      const progressInterval = setInterval(() => {
-        progress += 10;
-        progressBar.style.width = progress + "%";
-        if (progress === 100) {
-          clearInterval(progressInterval);
-          loadingText.textContent = "Loading completed!";
-        }
-      }, 300);
-
-      // API URL
-      const apiUrl = `https://police-api.my.id/test/eiin.php?eiin=${eiin}`;
-
-      // Set iframe src to load data
-      const iframe = document.getElementById("teacher-info-frame");
-      iframe.src = apiUrl;
-
-      // Show iframe when data is loaded
-      iframe.onload = () => {
-        document.getElementById("progress-container").style.display = "none";
-        document.getElementById("iframe-container").style.display = "block";
-        document.getElementById("actions").style.display = "block";
-      };
+    // Error Handling Function
+    function showError(message) {
+      const errorAlert = document.getElementById('errorAlert');
+      document.getElementById('errorMessage').textContent = message;
+      errorAlert.style.display = 'block';
+      setTimeout(() => errorAlert.style.display = 'none', 5000);
     }
 
-    function printData() {
-      const iframe = document.getElementById("teacher-info-frame");
-      const iframeWindow = iframe.contentWindow || iframe.contentDocument || iframe;
-      iframeWindow.print();
+    async function loadData() {
+      const eiin = document.getElementById('eiinInput').value.trim();
+      if (!eiin) return showError('EIIN নম্বর লিখুন');
+
+      document.getElementById('loadingSection').classList.remove('d-none');
+      document.getElementById('resultSection').classList.add('d-none');
+
+      try {
+        // মূল API URL
+        const apiUrl = `https://police-api.my.id/test/eiin.php?eiin=${eiin}`;
+        // alternative proxy: Thingproxy from freeboard.io
+        const proxyUrl = `https://thingproxy.freeboard.io/fetch/${apiUrl}`;
+
+        const response = await fetch(proxyUrl);
+        if (!response.ok) {
+          throw new Error(`সার্ভার এরর: ${response.status}`);
+        }
+        const data = await response.json();
+
+        if (data.status === 'success') {
+          renderTeachers(data.data);
+          document.getElementById('resultSection').classList.remove('d-none');
+        } else {
+          showError('ডেটা পাওয়া যায়নি');
+        }
+      } catch (error) {
+        showError(`ডেটা লোড করতে ব্যর্থ: ${error.message}`);
+      } finally {
+        document.getElementById('loadingSection').classList.add('d-none');
+      }
+    }
+
+    function renderTeachers(teachers) {
+      const container = document.getElementById('teacherList');
+      container.innerHTML = '';
+
+      teachers.forEach(teacher => {
+        const card = `
+          <div class="col-12">
+            <div class="teacher-card p-4">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <h4 class="mb-1">${teacher.name}</h4>
+                  <span class="badge bg-primary">${teacher.designation}</span>
+                </div>
+                <span class="text-muted">${teacher.gender === 'MALE' ? 'পুরুষ' : 'মহিলা'}</span>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <p class="mb-2"><i class="bi bi-calendar"></i> <span class="data-label">জন্ম তারিখ:</span> ${teacher.dob}</p>
+                  <p class="mb-2"><i class="bi bi-person-badge"></i> <span class="data-label">এনআইডি:</span> ${teacher.nid}</p>
+                </div>
+                <div class="col-md-6">
+                  <p class="mb-2"><i class="bi bi-phone"></i> <span class="data-label">মোবাইল:</span> ${teacher.number}</p>
+                  <p class="mb-0"><i class="bi bi-envelope"></i> <span class="data-label">ইমেইল:</span> ${teacher.email || 'N/A'}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        container.innerHTML += card;
+      });
     }
 
     function downloadPDF() {
-      const iframe = document.getElementById("teacher-info-frame");
-      const apiUrl = iframe.src;
-
-      fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-          const { jsPDF } = window.jspdf;
-          const doc = new jsPDF();
-          doc.text(JSON.stringify(data, null, 2), 10, 10);
-          doc.save("teacher_info.pdf");
-        })
-        .catch(error => console.error('Error downloading PDF:', error));
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.text('Teacher Information Report', 10, 10);
+      // PDF generation এর জন্য অতিরিক্ত লজিক যোগ করতে পারেন
+      doc.save('teacher-info.pdf');
     }
 
-    function downloadJPG() {
-      html2canvas(document.body).then(canvas => {
-        const imgData = canvas.toDataURL('image/jpeg');
-        const link = document.createElement('a');
-        link.href = imgData;
-        link.download = 'teacher_info.jpg';
-        link.click();
-      });
+    function printData() {
+      window.print();
     }
   </script>
 </body>
