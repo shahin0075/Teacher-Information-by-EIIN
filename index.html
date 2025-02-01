@@ -107,15 +107,16 @@
   <div class="row justify-content-center">
     <div class="col-lg-8">
       <div class="input-group mb-4 shadow-lg">
-        <input type="text" id="eiinInput" class="form-control form-control-lg" placeholder="EIIN নম্বর লিখুন">
-        <button id="searchBtn" class="btn btn-primary btn-lg">
+        <input type="text" id="eiinInput" class="form-control form-control-lg" placeholder="EIIN নম্বর লিখুন" onkeypress="checkEnter(event)">
+        <button id="searchBtn" class="btn btn-primary btn-lg" onclick="loadData()">
           <i class="bi bi-search"></i> অনুসন্ধান করুন
         </button>
       </div>
 
+      <!-- Progress Bar Section -->
       <div id="loadingSection" class="text-center d-none">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
+        <div class="progress">
+          <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
         <p class="mt-2 text-muted">ডেটা লোড হচ্ছে...</p>
       </div>
@@ -158,89 +159,134 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
+
   // Dark Mode Toggle
-  const darkModeToggle = document.getElementById('darkModeToggle');
-  darkModeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    darkModeToggle.innerHTML = document.body.classList.contains('dark-mode') ?
-      '<i class="bi bi-sun-fill"></i> লাইট মোড' :
-      '<i class="bi bi-moon-fill"></i> ডার্ক মোড';
-  });
+const darkModeToggle = document.getElementById('darkModeToggle');
+darkModeToggle.addEventListener('click', () => {
+  document.body.classList.toggle('dark-mode');
+  darkModeToggle.innerHTML = document.body.classList.contains('dark-mode') ?
+    '<i class="bi bi-sun-fill"></i> লাইট মোড' :
+    '<i class="bi bi-moon-fill"></i> ডার্ক মোড';
+});
 
-  // Error Handling Function
-  function showError(message) {
-    const errorAlert = document.getElementById('errorAlert');
-    document.getElementById('errorMessage').textContent = message;
-    errorAlert.style.display = 'block';
-    setTimeout(() => errorAlert.style.display = 'none', 5000);
-  }
+// Error Handling Function
+function showError(message) {
+  const errorAlert = document.getElementById('errorAlert');
+  document.getElementById('errorMessage').textContent = message;
+  errorAlert.style.display = 'block';
+  setTimeout(() => errorAlert.style.display = 'none', 5000);
+}
 
-  async function loadData() {
-    const eiin = document.getElementById('eiinInput').value.trim();
-    if (!eiin) return showError('EIIN নম্বর লিখুন');
+async function loadData() {
+  const eiin = document.getElementById('eiinInput').value.trim();
+  if (!eiin) return showError('EIIN নম্বর লিখুন');
 
-    document.getElementById('loadingSection').classList.remove('d-none');
-    document.getElementById('resultSection').classList.add('d-none');
+  document.getElementById('loadingSection').classList.remove('d-none');
+  document.getElementById('resultSection').classList.add('d-none');
 
-    try {
-      // API URL
-      const apiUrl = `https://police-api.my.id/test/eiin.php?eiin=${eiin}`;
-      const proxyUrl = `https://thingproxy.freeboard.io/fetch/${apiUrl}`;
+  // Initialize Progress Bar
+  let progress = 0;
+  const progressBar = document.getElementById('progressBar');
 
-      const response = await fetch(proxyUrl);
-      if (!response.ok) {
-        throw new Error(`সার্ভার এরর: ${response.status}`);
-      }
-      const data = await response.json();
-
-      if (data.status === 'success') {
-        renderTeachers(data.data);
-        document.getElementById('resultSection').classList.remove('d-none');
-      } else {
-        showError('ডেটা পাওয়া যায়নি');
-      }
-    } catch (error) {
-      showError(`ডেটা লোড করতে ব্যর্থ: ${error.message}`);
-    } finally {
-      document.getElementById('loadingSection').classList.add('d-none');
+  const interval = setInterval(() => {
+    if (progress < 90) {
+      progress += 10;
+      progressBar.style.width = ${progress}%;
+      progressBar.setAttribute('aria-valuenow', progress);
     }
+  }, 300);
+
+  try {
+    // API URL
+    const apiUrl = https://police-api.my.id/test/eiin.php?eiin=${eiin};
+    const proxyUrl = https://thingproxy.freeboard.io/fetch/${apiUrl};
+
+    const response = await fetch(proxyUrl);
+    if (!response.ok) {
+      throw new Error(সার্ভার এরর: ${response.status});
+    }
+    const data = await response.json();
+
+    if (data.status === 'success') {
+      renderTeachers(data.data);
+      document.getElementById('resultSection').classList.remove('d-none');
+    } else {
+      showError('ডেটা পাওয়া যায়নি');
+    }
+  } catch (error) {
+    showError(ডেটা লোড করতে ব্যর্থ: ${error.message});
+  } finally {
+    clearInterval(interval);
+    progressBar.style.width = '100%';
+    progressBar.setAttribute('aria-valuenow', 100);
+    setTimeout(() => {
+      document.getElementById('loadingSection').classList.add('d-none');
+    }, 1000);
   }
+}
 
-  function renderTeachers(teachers) {
-    const container = document.getElementById('teacherList');
-    container.innerHTML = '';
+function renderTeachers(teachers) {
+  const container = document.getElementById('teacherList');
+  container.innerHTML = '';
 
-    teachers.forEach(teacher => {
-      const card = `
-        <div class="col-12">
-          <div class="teacher-card p-4">
-            <div class="d-flex justify-content-between align-items-start mb-3">
-              <div>
-                <h4 class="mb-1">${teacher.name}</h4>
-                <span class="badge bg-primary">${teacher.designation}</span>
-              </div>
-              <span class="text-muted">${teacher.gender === 'MALE' ? 'পুরুষ' : 'মহিলা'}</span>
+  teachers.forEach(teacher => {
+    const card = 
+      <div class="col-12">
+        <div class="teacher-card p-4">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <h4 class="mb-1">${teacher.name}</h4>
+              <span class="badge bg-primary">${teacher.designation}</span>
             </div>
+            <span class="text-muted">${teacher.gender === 'MALE' ? 'পুরুষ' : 'মহিলা'}</span>
+          </div>
 
-            <div class="row">
-              <div class="col-md-6">
-                <p class="mb-2"><i class="bi bi-calendar"></i> <span class="data-label">জন্ম তারিখ:</span> ${teacher.dob}</p>
-                <p class="mb-2"><i class="bi bi-person-badge"></i> <span class="data-label">এনআইডি:</span> ${teacher.nid}</p>
-              </div>
-              <div class="col-md-6">
-                <p class="mb-2"><i class="bi bi-phone"></i> <span class="data-label">মোবাইল:</span> ${teacher.number}</p>
-                <p class="mb-0"><i class="bi bi-envelope"></i> <span class="data-label">ইমেইল:</span> ${teacher.email}</p>
-              </div>
+          <div class="row">
+            <div class="col-md-6">
+              <p class="mb-2"><i class="bi bi-calendar"></i> <span class="data-label">জন্ম তারিখ:</span> ${teacher.dob}</p>
+              <p class="mb-2"><i class="bi bi-person-badge"></i> <span class="data-label">এনআইডি:</span> ${teacher.nid}</p>
+            </div>
+            <div class="col-md-6">
+              <p class="mb-2"><i class="bi bi-phone"></i> <span class="data-label">মোবাইল:</span> ${teacher.number}</p>
+              <p class="mb-0"><i class="bi bi-envelope"></i> <span class="data-label">ইমেইল:</span> ${teacher.email}</p>
             </div>
           </div>
         </div>
-      `;
-      container.innerHTML += card;
-    });
-  }
+      </div>
+    ;
+    container.innerHTML += card;
+  });
+}
 
-  // Event Listeners
-  document.getElementById('searchBtn').addEventListener('click', loadData);
+function downloadPDF() {
+  const doc = new jsPDF();
+  const teacherList = document.getElementById('teacherList');
+  let content = teacherList.innerText;  // Extract text content from the teacher list
+
+  doc.text(content, 10, 10); // Place the content on the PDF
+  doc.save('teachers_info.pdf'); // Save the PDF with the name "teachers_info.pdf"
+}
+
+function printData() {
+  const teacherList = document.getElementById('teacherList');
+  const printWindow = window.open('', '', 'height=600,width=800');
+  printWindow.document.write('<html><head><title>Teacher Information</title></head><body>');
+  printWindow.document.write(teacherList.innerHTML); // Add the teacher list content to the print window
+  printWindow.document.write('</body></html>');
+  printWindow.document.close();
+  printWindow.print(); // Trigger the print dialog
+}
+
+// Event Listeners
+document.getElementById('searchBtn').addEventListener('click', loadData);
+
+// Trigger search when pressing "Enter"
+document.getElementById('eiinInput').addEventListener('keypress', function (event) {
+  if (event.key === 'Enter') {
+    loadData();
+  }
+});
+
 </script>
 </body>
 </html>
