@@ -184,13 +184,13 @@
 
       try {
         // মূল API URL
-        const apiUrl = `https://police-api.my.id/test/eiin.php?eiin=${eiin}`;
+        const apiUrl = https://police-api.my.id/test/eiin.php?eiin=${eiin};
         // alternative proxy: Thingproxy from freeboard.io
-        const proxyUrl = `https://thingproxy.freeboard.io/fetch/${apiUrl}`;
+        const proxyUrl = https://thingproxy.freeboard.io/fetch/${apiUrl};
 
         const response = await fetch(proxyUrl);
         if (!response.ok) {
-          throw new Error(`সার্ভার এরর: ${response.status}`);
+          throw new Error(সার্ভার এরর: ${response.status});
         }
         const data = await response.json();
 
@@ -201,7 +201,7 @@
           showError('ডেটা পাওয়া যায়নি');
         }
       } catch (error) {
-        showError(`ডেটা লোড করতে ব্যর্থ: ${error.message}`);
+        showError(ডেটা লোড করতে ব্যর্থ: ${error.message});
       } finally {
         document.getElementById('loadingSection').classList.add('d-none');
       }
